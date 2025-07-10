@@ -8,13 +8,23 @@ public class PlayerInput : MonoBehaviour
     {
         ship = GetComponent<Ship>();
     }
+    private void OnEnable()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
     void Update()
     {
         ship.Impulse = Input.GetAxis("Vertical");
-        ship.Torque = Input.GetAxis("Horizontal");
+        ship.Torque = -Input.GetAxis("Horizontal");
         if (Input.GetKey(KeyCode.Space))
         {
             ship.Shoot();
         }
+    }
+    private void OnDisable()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }
