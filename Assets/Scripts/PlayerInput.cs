@@ -22,9 +22,4 @@ public class PlayerInput : MonoBehaviour
             ship.Shoot();
         }
     }
-    private void OnDisable()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
 }

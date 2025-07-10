@@ -42,6 +42,6 @@ public class Bullet : MonoBehaviour
     private void OnDisable()
     {
         Parent = null;
-        GameManager.Instance.AddBulletToPool(this);
+        BulletManager.Instance.AddBulletToPool(this);
     }
 }

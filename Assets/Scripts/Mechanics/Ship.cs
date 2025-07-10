@@ -7,6 +7,7 @@ public class Ship : MonoBehaviour
     [SerializeField] float shotCooldown = 0.5f;
     float lastTimeShot = -1;
     float torque;
+    [SerializeField] GameObject thrusters, backThrusters;
     public float Torque
     {
         get
@@ -27,7 +28,24 @@ public class Ship : MonoBehaviour
         }
         set
         {
-            impulse = Mathf.Clamp(value, -1, 1);
+            var newValue = Mathf.Clamp(value, -1, 1);
+            if (impulse != newValue)
+            {
+                if (newValue == 0)
+                {
+                    thrusters.SetActive(false);
+                    backThrusters.SetActive(false);
+                }
+                else if (newValue > 0)
+                {
+                    thrusters.SetActive(true);
+                }
+                else
+                {
+                    backThrusters.SetActive(true);
+                }
+                impulse = newValue;
+            }
         }
     }
     private void Awake()
@@ -40,14 +58,14 @@ public class Ship : MonoBehaviour
     }
     private void OnEnable()
     {
-        GameManager.Instance.RegisterShip(transform);
+        ShipManager.Instance.RegisterShip(transform);
     }
     public void Shoot()
     {
         if (Time.time - lastTimeShot >= shotCooldown)
         {
             //fire
-            GameManager.Instance.GetBullet(transform);
+            BulletManager.Instance.GetBullet(transform);
             lastTimeShot = Time.time;
         }
     }
@@ -94,6 +112,6 @@ public class Ship : MonoBehaviour
     }
     private void OnDisable()
     {
-        GameManager.Instance.ShipDestroyed(transform);
+        ShipManager.Instance.ShipDestroyed(transform);
     }
 }

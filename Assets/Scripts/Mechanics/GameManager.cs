@@ -5,16 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    Pool<Bullet> pool = new();
-    [SerializeField] Bullet prefab;
-    [SerializeField] Transform playerPrefab, aiPrefab;
     [SerializeField] Canvas gameOverScreen;
-    [SerializeField] TextMeshPro gameOverText;
+    [SerializeField] TextMeshProUGUI gameOverText;
     public static GameManager Instance { get; private set; }
     [field: SerializeField] public List<Transform> Stars { get; protected set; } = new();
-    public HashSet<Transform> ships { get; protected set; } = new();
-    [SerializeField] int nrOfTeams = 2;
-    [SerializeField] List<Transform> spawns = new();
     private void Awake()
     {
         if (Instance == null)
@@ -22,55 +16,13 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
-    private void OnEnable()
+    public void GameOver(Transform winner)
     {
-        SpawnShips();
-    }
-    void SpawnShips()
-    {
-        int index = 0;
-        if (GlobalConfig.Player)
-        {
-            nrOfTeams--;
-            Instantiate(playerPrefab, spawns[index].position, spawns[index].rotation);
-            index++;
-        }
-        while (index < nrOfTeams)
-        {
-            Instantiate(aiPrefab, spawns[index].position, spawns[index].rotation);
-            index++;
-        }
-    }
-    public Bullet GetBullet(Transform parent)
-    {
-        var b = pool.Get();
-        if (b == null)
-        {
-            b = Instantiate(prefab);
-        }
-        b.Parent = parent;
-        b.transform.position = parent.position;
-        b.transform.rotation = parent.rotation;
-        b.gameObject.SetActive(true);
-        return b;
-    }
-    public void AddBulletToPool(Bullet bullet)
-    {
-        pool.Release(bullet);
-    }
-    public void RegisterShip(Transform ship)
-    {
-        ships.Add(ship);
-    }
-    public void ShipDestroyed(Transform ship)
-    {
-        ships.Remove(ship);
-        if (ships.Count == 1)
-        {
-            //game over
-            gameOverScreen.gameObject.SetActive(true);
-            gameOverText.text = $"Game over!\n {ships.GetEnumerator().Current} won!";
-        }
+        //game over
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        gameOverScreen.gameObject.SetActive(true);
+        gameOverText.text = $"Game over!{winner.name} won!";
     }
     public void ToMainMenu()
     {
